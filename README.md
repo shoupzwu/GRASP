@@ -11,7 +11,7 @@ This is a implementation of the paper: Data-Agnostic Cardinality Learning from I
 
 This repo contains:
 
-* 🪐 A simplified PyTorch implementation of [GRASP](grasp), containing core functionalities of the GRASP system.
+* 🪐 A simplified PyTorch implementation of [GRASP](GRASP), containing core functionalities of the GRASP system.
 * ⚡️ A PyTorch implementation of [ArCDF](arcdf), improving on prior work [NeuroCDF](https://github.com/shoupzwu/selectivity_generalization).
 * 🛸 A self-contained [Python file](train_grasp_ceb.py) for reproducing the main experiments on CEB-IMDb-full.
 * 🛸 A self-contained [Python file](train_grasp_dsb.py) for reproducing the main experiments on DSB.
@@ -22,7 +22,7 @@ This repo contains:
 ## Preparation
 ### Dataset/Workloads
 1. Download [CEB-IMDb-full (i.e., CEB-IMDb-13k)](https://github.com/learnedsystems/CEB/blob/main/scripts/download_imdb_workload.sh) benchmark, and place the entire directory in your `IMDB_DIRECTORY` in `train_grasp_ceb.py` .
-2. The DSB workload is contained in [this directory](queries/dsb.csv).
+2. The DSB workload is contained in [this file](queries/dsb.csv).
 3. The TPC-E workload can be downlowned from this [link](https://drive.google.com/file/d/1TnRaOsYUqzE6WEY2Ac0ynw3zTEOl3XjM/view), and please place it in `/queries`.
 
 ### Query Optimization
