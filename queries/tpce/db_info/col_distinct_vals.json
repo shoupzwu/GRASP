@@ -1,0 +1,56 @@
+{
+    "s_issue": [
+        "COMMON",
+        "PREF_A",
+        "PREF_B",
+        "PREF_C",
+        "PREF_D"
+    ],
+    "t_st_id": [
+        "CMPT",
+        "CNCL",
+        "PNDG",
+        "SBMT"
+    ],
+    "tt_id": [
+        "TLB",
+        "TLS",
+        "TMB",
+        "TMS",
+        "TSL"
+    ],
+    "ch_tt_id": [
+        "TLB",
+        "TLS",
+        "TMB",
+        "TMS",
+        "TSL"
+    ],
+    "cr_ex_id": [
+        "AMEX",
+        "NASDAQ",
+        "NYSE",
+        "PCX"
+    ],
+    "cr_tt_id": [
+        "TLB",
+        "TLS",
+        "TMB",
+        "TMS",
+        "TSL"
+    ],
+    "sc_name": [
+        "Basic Materials",
+        "Capital Goods",
+        "Conglomerates",
+        "Consumer Cyclical",
+        "Consumer Non-Cyclical",
+        "Energy",
+        "Financial",
+        "Healthcare",
+        "Services",
+        "Technology",
+        "Transportation",
+        "Utilities"
+    ]
+}
