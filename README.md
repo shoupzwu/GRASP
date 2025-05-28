@@ -57,7 +57,7 @@ The training scripts can be configured by modifying the parameters in the respec
 
 ## Utilities
 
-The project includes various utility functions and classes located in the `CEB_utlities`, `dsb_utlities` and `tpce_utlities` directories. These utilities are used for data/workloads processing.
+The project includes various utility functions and classes located in the `CEB_utlities` and `dsb_utlities` directories. These utilities are used for data/workloads processing.
 
 ## License
 
