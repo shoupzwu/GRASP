@@ -80,22 +80,6 @@ def multi_queries_batch_query2cdfs(batch_qs, num_cols):
 			normal_batch_signs[i, j, :len(signs)] = np.array(signs)
 			normal_batch_masks[i, j] = 1.
 
-
-	# for cdfs_per_join, signs_per_join, masks_per_join in zip(batch_cdfs, batch_signs, query_masks):
-	# 	for cdfs, signs in zip(cdfs_per_join, signs_per_join):
-	# 		for _ in range(max_num_cdfs - len(cdfs)):
-	# 			cdfs.append(np.zeros(num_cols))
-	# 			signs.append(0.)
-	#
-	# 	for _ in range(max_num_normal_queries - len(cdfs_per_join)):
-	# 		cdfs_per_join.append(np.zeros((max_num_cdfs, num_cols)))
-	# 		signs_per_join.append(np.zeros(max_num_cdfs))
-	# 		masks_per_join.append(0)
-
-	# normal_batch_cdfs = np.array(batch_cdfs)
-	# normal_batch_signs = np.array(batch_signs)
-	# normal_batch_masks = np.array(query_masks)
-
 	return normal_batch_cdfs, normal_batch_signs, normal_batch_masks
 
 def multi_queries_batch_contexts(batch_q_contexts, like_embed_size):
@@ -116,43 +100,6 @@ def multi_queries_batch_contexts(batch_q_contexts, like_embed_size):
 			batch_contexts[i, :num_contexts] = np.array(q_contexts)
 			batch_masks[i, :num_contexts] = 1
 			batch_indicators[i] = 1
-
-	########
-
-	# batch_contexts = []
-	# batch_masks = []
-	# batch_indicators = []
-	#
-	# max_num_contexts = 0
-	#
-	# for q_contexts in batch_q_contexts:
-	# 	# every normal query of a join query has the same context, so do its cdfs!
-	#
-	# 	contexts_per_join = []
-	# 	masks_per_join = []
-	# 	indicators_per_join = 0
-	#
-	# 	if len(q_contexts) > 0:
-	# 		for q_context in q_contexts:
-	# 			contexts_per_join.append(q_context)
-	# 			masks_per_join.append(1)
-	# 		indicators_per_join = 1
-	#
-	# 	if len(q_contexts) > max_num_contexts:
-	# 		max_num_contexts = len(q_contexts)
-	#
-	# 	batch_contexts.append(contexts_per_join)
-	# 	batch_masks.append(masks_per_join)
-	# 	batch_indicators.append(indicators_per_join)
-	#
-	# for contexts_per_join, masks_per_join in zip(batch_contexts, batch_masks):
-	# 	for _ in range(max_num_contexts - len(contexts_per_join)):
-	# 		contexts_per_join.append(np.zeros(like_embed_size))
-	# 		masks_per_join.append(0)
-	#
-	# batch_contexts = np.array(batch_contexts)
-	# batch_masks = np.array(batch_masks)
-	# batch_indicators = np.array(batch_indicators)
 
 	return batch_contexts, batch_masks, batch_indicators
 
@@ -293,14 +240,6 @@ def multi_batch_query2interval(batch_queries, num_cols, flip_start=False):
 			pad_size = max_num_normal_qs - len(intervals)
 			padding = np.zeros((pad_size, 2 * num_cols), dtype=np.float64)
 			interval_res[i] = np.vstack((intervals, padding))
-
-
-	# for intervals in interval_res:
-	# 	for _ in range(max_num_normal_qs - len(intervals)):
-	# 		zero_interval = []
-	# 		for _ in range(2*num_cols):
-	# 			zero_interval.append(0)
-	# 		intervals.append(zero_interval)
 
 	interval_res = torch.from_numpy(np.array(interval_res))
 	t2 = time.time()

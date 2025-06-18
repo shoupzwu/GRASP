@@ -48,7 +48,7 @@ OPS = ['lt', 'eq', 'in', 'like']
 
 class JoinHandler():
 	def __init__(self, table_list, table_dim_list, table_key_groups,
-				 table_size_list, cdf_model_choice,
+				 table_size_list, cdf_model_choice='arcdf',
 				  hidden_size=64, lcs_size=10, colid2featlen_per_table=None):
 		super().__init__()
 
@@ -63,8 +63,7 @@ class JoinHandler():
 			hidden_size (int, optional): Size of the hidden layer. Defaults to 64.
 			lcs_size (int, optional): Size of the join bin in LCS model. Defaults to 10.
 			colid2featlen_per_table (dict, optional): Dictionary mapping column IDs to feature lengths per table. Defaults to None.
-		Raises:
-			Exception: If the specified CDF model choice is not supported.
+		
 		"""
 
 		self.table_list = table_list
@@ -104,6 +103,12 @@ class JoinHandler():
 
 
 	def init_ce_predictors(self, colid2featlen_per_table):
+		"""
+        Initializes the cardinality estimation predictors for each table.
+
+        Args:
+            colid2featlen_per_table (dict): Mapping from table name to column feature lengths.
+        """
 		self.max_featlen_per_table = {}
 		for table_name in self.table_size_list:
 			self.max_featlen_per_table[table_name] = 0
@@ -144,6 +149,9 @@ class JoinHandler():
 				self.table_ce_models.append(None)
 
 	def init_unified_lcs_predictors(self):
+		"""
+        Initializes the LCS predictors for each table and key group.
+        """
 		self.bin_size_per_key_group = {}
 
 		for key_group in self.table_key_groups:
@@ -200,6 +208,16 @@ class JoinHandler():
 		return trainable_paras
 
 	def generate_key_group_mask(self, table_list, key_groups):
+		"""
+        Generates masks for key groups and tables for join queries.
+
+        Args:
+            table_list (list): List of tables in the join.
+            key_groups (dict): Key groups for the join.
+
+        Returns:
+            tuple: (per_t_mask, per_t_group_mask)
+        """
 		per_t_mask = []
 		per_t_group_mask = []
 		
@@ -244,6 +262,16 @@ class JoinHandler():
 		return per_t_mask, per_t_group_mask
 
 	def template_to_group_order(self, ori_key_groups):
+		"""
+        Orders key groups and tables for join traversal.
+
+        Args:
+            ori_key_groups (dict): Original key groups.
+
+        Returns:
+            tuple: (keys, tables) in traversal order.
+        """
+
 		if len(ori_key_groups) == 0:
 			return None, None
 
@@ -253,6 +281,7 @@ class JoinHandler():
 
 		keys = [start_join_key]
 		tables = [copy.deepcopy(key_groups[start_join_key][0])]
+
 		###### start traverse all key groups
 
 		del key_groups[start_join_key][0]
@@ -272,8 +301,17 @@ class JoinHandler():
 		return keys, tables
 
 	def template_to_group_order_w_mask(self, ori_key_groups, t_mask_list, t_group_mask_list):
-		# t_mask_list: a list of t_mask results
-		# t_group_mask_list: a list of t_group_mask results
+		"""
+        Orders key groups and tables for join traversal, with masks.
+
+        Args:
+            ori_key_groups (dict): Original key groups.
+            t_mask_list (list): Table mask results.
+            t_group_mask_list (list): Table group mask results.
+
+        Returns:
+            tuple: (keys, tables, final_t_mask_list, final_t_group_mask_list, use_table_sels_list)
+        """
 
 		if len(ori_key_groups) == 0:
 			return None, None
@@ -350,6 +388,15 @@ class JoinHandler():
 		return keys, tables, final_t_mask_list, final_t_group_mask_list, use_table_sels_list
 
 	def separate_in_clase(self, table2predicates):
+		"""
+        Separates IN clauses in predicates for each table.
+
+        Args:
+            table2predicates (dict): Table to predicates.
+
+        Returns:
+            dict: Table to normal predicates.
+        """
 		table2normalpredicates = {}
 		for t in table2predicates:
 			table_res_list = []
@@ -372,8 +419,21 @@ class JoinHandler():
 		return table2normalpredicates
 
 	def load_training_queries(self, table2predicates_list, table2contexts_list, table2qreps_list, training_cards, bs=64, temp_table_list=None, is_cuda=True):
-		#### list of join queries
-		#### batch_size * table2predicates_list
+		"""
+        Loads and processes training queries into batches for model training.
+
+        Args:
+            table2predicates_list (dict): table to list of query predicates.
+            table2contexts_list (dict): table to list of query contexts.
+            table2qreps_list (dict): table to list of query representations.
+            training_cards (list): List of training cardinalities.
+            bs (int): Batch size.
+            temp_table_list (list, optional): table list for the template.
+            is_cuda (bool): Whether to use CUDA.
+
+        Returns:
+            tuple: (dataloader, table_list)
+        """
 
 		if temp_table_list is None:
 			table_list = list(table2predicates_list[0].keys())
@@ -998,6 +1058,10 @@ class JoinHandler():
 		return curr_card_pred
 	
 	def start_train(self):
+		"""
+        Sets all models to training mode.
+        """
+
 		for cdf_model in self.table_cdf_models:
 			if cdf_model is not None:
 				cdf_model.train()
@@ -1032,7 +1096,16 @@ class JoinHandler():
 				join_model.cuda()
 
 	def save_models(self, epoch_id, bs, lr, save_directory='./saved_models/grasp/'):
-		# Ensure the save directory exists
+		"""
+        Saves all models to disk.
+
+        Args:
+            epoch_id (int): Epoch identifier.
+            bs (int): Batch size.
+            lr (float): Learning rate.
+            save_directory (str): Directory to save models.
+        """
+
 		info = "{}+{}+{}".format(epoch_id, bs, lr)
 		if not os.path.exists(save_directory + info):
 			os.makedirs(save_directory + info)
@@ -1053,6 +1126,16 @@ class JoinHandler():
 				torch.save(join_model, f"{save_directory}/unified_join_model_{table_name}_{idx}.pt")
 
 	def load_models_from_disk(self, epoch_id, bs, lr, save_directory='./saved_models/grasp/'):
+		"""
+        Loads all models from disk.
+
+        Args:
+            epoch_id (int): Epoch identifier.
+            bs (int): Batch size.
+            lr (float): Learning rate.
+            save_directory (str): Directory to load models from.
+        """
+
 		info = "{}+{}+{}".format(epoch_id, bs, lr)
 		save_directory = save_directory + info
 
@@ -1073,6 +1156,9 @@ class JoinHandler():
 				self.table_unified_join_predictors[table_name] = torch.load(model_path,map_location=torch.device('cpu') )
 
 	def models_to_double(self):
+		"""
+        Converts all models to double precision.
+        """
 		for cdf_model in self.table_cdf_models:
 			if cdf_model is not None:
 				cdf_model.double()
@@ -1085,6 +1171,9 @@ class JoinHandler():
 				join_model.double()
 
 	def start_eval(self):
+		"""
+        Sets all models to evaluation mode.
+        """
 		for cdf_model in self.table_cdf_models:
 			if cdf_model is not None:
 				cdf_model.eval()
