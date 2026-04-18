@@ -25,7 +25,7 @@ This repo contains:
 
 ### Query Optimization
 1. Please download and install the modified PostgreSQL from [here](https://github.com/Nathaniel-Han/End-to-End-CardEst-Benchmark/tree/master).
-2. Download the IMDb dataset from [here](http://homepages.cwi.nl/~boncz/job/imdb.tgz), and download the populated DSB dataset used in the paper from [here](https://mega.nz/file/iCI2hRhY#96_uiKFvFq0HUcoNNPRnVtMy5BbJ-1QuSry2d3l83xk). 
+2. Download the IMDb dataset from [here](http://homepages.cwi.nl/~boncz/job/imdb.tgz), and download the populated DSB dataset used in the paper from [here](https://drive.google.com/file/d/1WrgWisx2c6hcfjtoIlcCpajc1TShQtYU/view?usp=sharing). 
 3. Please load the data into PostgreSQL.
 
 ## Usage
